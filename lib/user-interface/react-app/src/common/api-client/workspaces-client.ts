@@ -84,6 +84,7 @@ export class WorkspacesClient {
     chunkingStrategy: string;
     chunkSize: number;
     chunkOverlap: number;
+    docType: string;
   }): Promise<GraphQLResult<GraphQLQuery<CreateOpenSearchWorkspaceMutation>>> {
     const result = API.graphql<GraphQLQuery<CreateOpenSearchWorkspaceMutation>>(
       {

@@ -1,0 +1,39 @@
+{
+    "level": "INFO",
+    "location": "record_handler:125",
+    "message": {
+        "action": "run",
+        "modelInterface": "langchain",
+        "direction": "IN",
+        "timestamp": "1715301523",
+        "userId": "289173d0-a031-70eb-363b-c12f7f56ede8",
+        "data": {
+            "mode": "chain",
+            "text": "How to order subway sandwiches?",
+            "files": [],
+            "modelName": "meta.llama3-8b-instruct-v1:0",
+            "provider": "bedrock",
+            "sessionId": "",
+            "sessionId_TEST": "f7bc8525-6f64-4e73-9485-8f5b5aeea742",
+            "workspaceId": "",
+            "injectPrompt": "Please answer the response in korean",
+            "modelKwargs": {
+                "streaming": true,
+                "maxTokens": 512,
+                "temperature": 0.6,
+                "topP": 0.9
+            }
+        },
+        "test" : {
+            "sendToClient": false
+        }
+    },
+    "timestamp": "2024-05-10 00:38:43,625+0000",
+    "service": "chatbot",
+    "cold_start": false,
+    "function_name": "llm-chat-devGenAIChatBotS-LangchainInterfaceReques-QVOOZXdE5jRh",
+    "function_memory_size": "1024",
+    "function_arn": "arn:aws:lambda:us-west-2:723597067299:function:llm-chat-devGenAIChatBotS-LangchainInterfaceReques-QVOOZXdE5jRh",
+    "function_request_id": "e2038a5a-5ced-5149-89ef-d4ed32280884",
+    "xray_trace_id": "1-663d6c93-29ad17367910f9ed4d81d6e8"
+}

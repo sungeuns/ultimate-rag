@@ -1,0 +1,34 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-west-2",
+      "eventTime": "2024-05-13T03:45:06.127Z",
+      "eventName": "ObjectCreated:Post",
+      "userIdentity": {
+        "principalId": "AWS:AROA2Q6N7AQRY5YRTDIBL:llm-chat-devGenAIChatBotS-ChatBotApiRestApiGraphQL-11s6Voo6hQJz"
+      },
+      "requestParameters": { "sourceIPAddress": "15.248.4.52" },
+      "responseElements": {
+        "x-amz-request-id": "A83DVDZQ41M4BC78",
+        "x-amz-id-2": "L0oD4//Xx1aNmQY8XofvOdskLEC4yjb7q1DZbFA6toXmgxzyzNA2SmBLiXZFOCwYiomQOnsamIKSuOH3C8hlO2w9dwKTGXjy"
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "ZmJjMDJkNDktMDQyOC00YTQwLTgzZGEtMmRjNTY4NjVlNzMx",
+        "bucket": {
+          "name": "llm-chat-devgenaichatbots-ragenginesdataimportuplo-imywistfc3rb",
+          "ownerIdentity": { "principalId": "A18KJR2I6Q8TJ" },
+          "arn": "arn:aws:s3:::llm-chat-devgenaichatbots-ragenginesdataimportuplo-imywistfc3rb"
+        },
+        "object": {
+          "key": "92106a84-8f69-4c66-b0dd-90ba52df0377/sample_03.pdf",
+          "size": 2755023,
+          "eTag": "d19fbed70b6f48dc83ec411da12cbfb0",
+          "sequencer": "0066418CC14247DBE7"
+        }
+      }
+    }
+  ]
+}

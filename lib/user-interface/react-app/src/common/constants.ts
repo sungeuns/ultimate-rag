@@ -28,6 +28,7 @@ export const languageList = [
   { value: "serbian", label: "Serbian" },
   { value: "spanish", label: "Spanish" },
   { value: "swedish", label: "Swedish" },
+  { value: "korean", label: "Korean" },
 ];
 
 export abstract class Labels {

@@ -73,6 +73,7 @@ function createNewSession(): ChatSession {
       maxTokens: 512,
       temperature: 0.1,
       topP: 0.9,
+      injectPrompt: "",
     },
   };
 }
@@ -190,6 +191,7 @@ export default function MultiChat() {
           sessionId: chatSession.id,
           files: [],
           workspaceId: chatSession.workspace?.value,
+          injectPrompt: chatSession.configuration.injectPrompt,
           modelKwargs: {
             streaming: chatSession.configuration.streaming,
             maxTokens: chatSession.configuration.maxTokens,

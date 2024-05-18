@@ -78,6 +78,10 @@ def handle_run(record):
 
     if not session_id:
         session_id = str(uuid.uuid4())
+    
+    inject_prompt = data.get("injectPrompt", "")
+        
+    logger.info(f"[USER_REQUEST] prompt: {prompt}")
 
     adapter = registry.get_adapter(f"{provider}.{model_id}")
 
@@ -91,6 +95,7 @@ def handle_run(record):
         session_id=session_id,
         user_id=user_id,
         model_kwargs=data.get("modelKwargs", {}),
+        inject_prompt=inject_prompt,
     )
 
     response = model.run(
@@ -99,6 +104,11 @@ def handle_run(record):
     )
 
     logger.info(response)
+
+    if record.get("test", None):
+        sns_publish = record["test"].get("sendToClient", None)
+        if not sns_publish:
+            return response
 
     send_to_client(
         {

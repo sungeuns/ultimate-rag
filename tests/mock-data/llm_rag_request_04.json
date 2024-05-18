@@ -1,0 +1,39 @@
+{
+    "level": "INFO",
+    "location": "record_handler:125",
+    "message": {
+        "action": "run",
+        "modelInterface": "langchain",
+        "direction": "IN",
+        "timestamp": "1715299579",
+        "userId": "289173d0-a031-70eb-363b-c12f7f56ede8",
+        "data": {
+            "mode": "chain",
+            "text": "how much export rate increased for south korea in 2022?",
+            "files": [],
+            "modelName": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "provider": "bedrock",
+            "sessionId-TEST": "26a7eb97-2935-4ba5-8ab7-7bc56915b388",
+            "sessionId": "",
+            "workspaceId": "7a12f283-edc4-468e-9eae-d246d3e64ded",
+            "injectPrompt": "Please answer in korean",
+            "modelKwargs": {
+                "streaming": true,
+                "maxTokens": 512,
+                "temperature": 0.6,
+                "topP": 0.9
+            }
+        },
+        "test" : {
+            "sendToClient": false
+        }
+    },
+    "timestamp": "2024-05-10 00:06:19,706+0000",
+    "service": "chatbot",
+    "cold_start": false,
+    "function_name": "llm-chat-devGenAIChatBotS-LangchainInterfaceReques-QVOOZXdE5jRh",
+    "function_memory_size": "1024",
+    "function_arn": "arn:aws:lambda:us-west-2:723597067299:function:llm-chat-devGenAIChatBotS-LangchainInterfaceReques-QVOOZXdE5jRh",
+    "function_request_id": "1ab233fc-85df-56cd-b0ad-6d4be2e4233f",
+    "xray_trace_id": "1-663d64fb-c8b08d678375b1e9141c1625"
+}

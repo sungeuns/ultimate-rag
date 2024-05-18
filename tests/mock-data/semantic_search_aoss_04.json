@@ -1,0 +1,23 @@
+{
+    "message": {
+        "arguments": {
+            "input": {
+                "workspaceId": "faa55aee-49d5-4226-9aed-2435390bbae5",
+                "query": "피부양자 공제 조건이 어떻게되나요"
+            }
+        },
+        "source": null,
+        "prev": null,
+        "info": {
+            "fieldName": "performSemanticSearch",
+            "parentTypeName": "Query",
+            "variables": {
+                "input": {
+                    "workspaceId": "faa55aee-49d5-4226-9aed-2435390bbae5",
+                    "query": "피부양자 공제 조건이 어떻게되나요"
+                }
+            }
+        },
+        "stash": {}
+    }
+}

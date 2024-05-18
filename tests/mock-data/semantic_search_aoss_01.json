@@ -1,0 +1,23 @@
+{
+    "message": {
+        "arguments": {
+            "input": {
+                "workspaceId": "92106a84-8f69-4c66-b0dd-90ba52df0377",
+                "query": "I am curious about the concept of thermal laser epitaxy"
+            }
+        },
+        "source": null,
+        "prev": null,
+        "info": {
+            "fieldName": "performSemanticSearch",
+            "parentTypeName": "Query",
+            "variables": {
+                "input": {
+                    "workspaceId": "92106a84-8f69-4c66-b0dd-90ba52df0377",
+                    "query": "I am curious about the concept of thermal laser epitaxy"
+                }
+            }
+        },
+        "stash": {}
+    }
+}

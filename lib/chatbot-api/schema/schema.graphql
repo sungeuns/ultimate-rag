@@ -35,6 +35,7 @@ input CreateWorkspaceOpenSearchInput {
   chunkingStrategy: String!
   chunkSize: Int!
   chunkOverlap: Int!
+  docType: String!
 }
 
 input CalculateEmbeddingsInput {
@@ -283,6 +284,7 @@ type Workspace @aws_cognito_user_pools {
   chunkingStrategy: String
   chunkSize: Int
   chunkOverlap: Int
+  docType: String
   vectors: Int
   documents: Int
   sizeInBytes: Int

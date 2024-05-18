@@ -33,6 +33,7 @@ class WorkspaceRetriever(BaseRetriever):
             "document_sub_type": item["document_sub_type"],
             "path": item["path"],
             "title": item["title"],
+            "metadata": item["metadata"],
             "score": item["score"],
         }
 

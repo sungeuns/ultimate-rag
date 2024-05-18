@@ -170,6 +170,7 @@ def create_workspace_open_search(
     chunking_strategy: str,
     chunk_size: int,
     chunk_overlap: int,
+    doc_type: str,
 ):
     workspace_id = str(uuid.uuid4())
     timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
@@ -201,6 +202,7 @@ def create_workspace_open_search(
         "chunking_strategy": chunking_strategy,
         "chunk_size": chunk_size,
         "chunk_overlap": chunk_overlap,
+        "doc_type": doc_type,
         "documents": 0,
         "vectors": 0,
         "size_in_bytes": 0,

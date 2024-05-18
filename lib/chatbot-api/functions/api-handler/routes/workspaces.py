@@ -46,6 +46,7 @@ class CreateWorkspaceOpenSearchRequest(BaseModel):
     chunkingStrategy: str
     chunkSize: int
     chunkOverlap: int
+    docType: str
 
 
 class CreateWorkspaceKendraRequest(BaseModel):
@@ -243,6 +244,10 @@ def _create_workspace_open_search(
     if request.chunkOverlap < 0 or request.chunkOverlap >= request.chunkSize:
         raise genai_core.types.CommonError("Invalid chunk overlap")
 
+    doc_type = "NORMAL"
+    if request.docType:
+        doc_type = request.docType
+    
     return _convert_workspace(
         genai_core.workspaces.create_workspace_open_search(
             workspace_name=workspace_name,
@@ -256,6 +261,7 @@ def _create_workspace_open_search(
             chunking_strategy=request.chunkingStrategy,
             chunk_size=request.chunkSize,
             chunk_overlap=request.chunkOverlap,
+            doc_type=doc_type,
         )
     )
 
@@ -311,6 +317,7 @@ def _convert_workspace(workspace: dict):
         "chunkingStrategy": workspace.get("chunking_strategy"),
         "chunkSize": workspace.get("chunk_size"),
         "chunkOverlap": workspace.get("chunk_overlap"),
+        "docType": workspace.get("doc_type", ""),
         "vectors": workspace.get("vectors", 0),
         "documents": workspace.get("documents", 0),
         "aossEngine": workspace.get("aoss_engine"),

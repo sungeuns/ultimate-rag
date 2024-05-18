@@ -21,6 +21,7 @@ def add_chunks(
     chunks: List[str],
     chunk_complements: List[str],
     path: Optional[str] = None,
+    metadata: List[object] = None,
 ):
     workspace_id = workspace["workspace_id"]
     engine = workspace["engine"]
@@ -75,6 +76,7 @@ def add_chunks(
             chunks=chunks,
             chunk_complements=chunk_complements,
             replace=replace,
+            metadata=metadata,
         )
     else:
         raise CommonError("Engine not supported")

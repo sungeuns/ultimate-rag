@@ -12,7 +12,13 @@ import { SharedAssetBundler } from "./shared-asset-bundler";
 import { NagSuppressions } from "cdk-nag";
 
 const pythonRuntime = lambda.Runtime.PYTHON_3_11;
-const lambdaArchitecture = lambda.Architecture.X86_64;
+
+// Default
+// const lambdaArchitecture = lambda.Architecture.X86_64;
+
+// Dev/Test on MacBook
+// When cdk deploy on macbook, there is a numpy related error (maybe buildx not works correctly)
+const lambdaArchitecture = lambda.Architecture.ARM_64;
 process.env.DOCKER_DEFAULT_PLATFORM = lambdaArchitecture.dockerPlatform;
 
 export interface SharedProps {

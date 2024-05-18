@@ -1,0 +1,8 @@
+{
+  "workspace_id": "92106a84-8f69-4c66-b0dd-90ba52df0377",
+  "document_id": "2287bdee-ae84-4433-86cf-a2a69a8e965d",
+  "input_bucket_name": "llm-chat-devgenaichatbots-ragenginesdataimportuplo-imywistfc3rb",
+  "input_object_key": "92106a84-8f69-4c66-b0dd-90ba52df0377/sample_02.pdf",
+  "processing_bucket_name": "llm-chat-devgenaichatbots-ragenginesdataimportproc-bx13ddia9ztc",
+  "processing_object_key": "92106a84-8f69-4c66-b0dd-90ba52df0377/2287bdee-ae84-4433-86cf-a2a69a8e965d/content.txt"
+}

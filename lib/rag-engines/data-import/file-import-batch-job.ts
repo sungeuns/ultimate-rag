@@ -146,7 +146,12 @@ export class FileImportBatchJob extends Construct {
       props.openSearchVector.addToAccessPolicy(
         "file-import-job",
         [fileImportJobRole.roleArn],
-        ["aoss:DescribeIndex", "aoss:ReadDocument", "aoss:WriteDocument"]
+        [
+          "aoss:DescribeIndex",
+          "aoss:UpdateIndex",
+          "aoss:ReadDocument",
+          "aoss:WriteDocument",
+        ]
       );
 
       props.openSearchVector.createOpenSearchWorkspaceWorkflow.grantStartExecution(

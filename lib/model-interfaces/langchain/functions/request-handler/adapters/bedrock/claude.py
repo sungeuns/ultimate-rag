@@ -34,7 +34,7 @@ class BedrockClaudeAdapter(ModelAdapter):
         )
 
     def get_qa_prompt(self):
-        template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+        template = self.inject_prompt + "\n" + """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
 {context}
 
@@ -45,7 +45,7 @@ Question: {question}"""
         )
 
     def get_prompt(self):
-        template = """The following is a friendly conversation between a human and an AI. If the AI does not know the answer to a question, it truthfully says it does not know.
+        template = self.inject_prompt + "\n" +  """The following is a friendly conversation between a human and an AI. If the AI does not know the answer to a question, it truthfully says it does not know.
 
 Current conversation:
 {chat_history}

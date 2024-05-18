@@ -81,6 +81,7 @@ export interface OpenSearchWorkspaceCreateInput {
   hybridSearch: boolean;
   chunkSize: number;
   chunkOverlap: number;
+  docType: SelectProps.Option | null;
 }
 
 export interface KendraWorkspaceCreateInput {

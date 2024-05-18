@@ -42,7 +42,7 @@ export class Layer extends Construct {
     const layer = new lambda.LayerVersion(this, "Layer", {
       code: lambda.Code.fromBucket(layerAsset.bucket, layerAsset.s3ObjectKey),
       compatibleRuntimes: [runtime],
-      compatibleArchitectures: [architecture],
+      compatibleArchitectures: [lambda.Architecture.X86_64, lambda.Architecture.ARM_64],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 

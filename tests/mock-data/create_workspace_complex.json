@@ -1,0 +1,78 @@
+{
+    "message": {
+        "arguments": {
+            "input": {
+                "name": "debug-workspace-complex",
+                "kind": "aoss",
+                "embeddingsModelProvider": "bedrock",
+                "embeddingsModelName": "amazon.titan-embed-text-v1",
+                "crossEncoderModelProvider": "sagemaker",
+                "crossEncoderModelName": "cross-encoder/ms-marco-MiniLM-L-12-v2",
+                "languages": [
+                    "english",
+                    "korean"
+                ],
+                "hybridSearch": true,
+                "chunkingStrategy": "recursive",
+                "chunkSize": 1000,
+                "chunkOverlap": 200,
+                "docType": "COMPLEX"
+            }
+        },
+        "info": {
+            "selectionSetList": [
+                "id",
+                "name",
+                "formatVersion",
+                "engine",
+                "status",
+                "aossEngine",
+                "languages",
+                "hasIndex",
+                "embeddingsModelProvider",
+                "embeddingsModelName",
+                "embeddingsModelDimensions",
+                "crossEncoderModelName",
+                "crossEncoderModelProvider",
+                "metric",
+                "index",
+                "hybridSearch",
+                "chunkingStrategy",
+                "chunkSize",
+                "chunkOverlap",
+                "vectors",
+                "documents",
+                "sizeInBytes",
+                "kendraIndexId",
+                "kendraIndexExternal",
+                "kendraUseAllData",
+                "createdAt",
+                "updatedAt",
+                "__typename"
+            ],
+            "selectionSetGraphQL": "{\n  id\n  name\n  formatVersion\n  engine\n  status\n  aossEngine\n  languages\n  hasIndex\n  embeddingsModelProvider\n  embeddingsModelName\n  embeddingsModelDimensions\n  crossEncoderModelName\n  crossEncoderModelProvider\n  metric\n  index\n  hybridSearch\n  chunkingStrategy\n  chunkSize\n  chunkOverlap\n  vectors\n  documents\n  sizeInBytes\n  kendraIndexId\n  kendraIndexExternal\n  kendraUseAllData\n  createdAt\n  updatedAt\n  __typename\n}",
+            "fieldName": "createOpenSearchWorkspace",
+            "parentTypeName": "Mutation",
+            "variables": {
+                "input": {
+                    "name": "debug-workspace2",
+                    "kind": "aoss",
+                    "embeddingsModelProvider": "bedrock",
+                    "embeddingsModelName": "amazon.titan-embed-text-v1",
+                    "crossEncoderModelProvider": "sagemaker",
+                    "crossEncoderModelName": "cross-encoder/ms-marco-MiniLM-L-12-v2",
+                    "languages": [
+                        "english",
+                        "korean"
+                    ],
+                    "hybridSearch": true,
+                    "chunkingStrategy": "recursive",
+                    "chunkSize": 1000,
+                    "chunkOverlap": 200,
+                    "docType": "COMPLEX"
+                }
+            }
+        },
+        "stash": {}
+    }
+}

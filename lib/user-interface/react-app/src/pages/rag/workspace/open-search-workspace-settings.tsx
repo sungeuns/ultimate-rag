@@ -94,6 +94,10 @@ export default function OpenSearchWorkspaceSettings(
             <Box variant="awsui-key-label">Chunk overlap</Box>
             <div>{props.workspace.chunkOverlap}</div>
           </div>
+          <div>
+            <Box variant="awsui-key-label">Document type</Box>
+            <div>{props.workspace.docType}</div>
+          </div>
         </SpaceBetween>
       </ColumnLayout>
     </Container>

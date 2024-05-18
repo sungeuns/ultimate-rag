@@ -7,6 +7,7 @@ import {
   Modal,
   SpaceBetween,
   Toggle,
+  Textarea,
 } from "@cloudscape-design/components";
 import { useForm } from "../../common/hooks/use-form";
 import { ChatBotConfiguration } from "./types";
@@ -25,6 +26,7 @@ interface LLMConfigDialogData {
   maxTokens: number;
   temperature: number;
   topP: number;
+  injectPrompt: string;
 }
 
 export default function LLMConfigDialog(props: LLMConfigDialogProps) {
@@ -36,6 +38,7 @@ export default function LLMConfigDialog(props: LLMConfigDialogProps) {
         maxTokens: props.session.configuration.maxTokens,
         temperature: props.session.configuration.temperature,
         topP: props.session.configuration.topP,
+        injectPrompt: props.session.configuration.injectPrompt,
       };
 
       return retValue;
@@ -162,6 +165,17 @@ export default function LLMConfigDialog(props: LLMConfigDialogProps) {
 
                 onChange({ topP: floatVal });
               }}
+            />
+          </FormField>
+          <FormField
+            label="Prompt"
+            errorText={errors.injectPrompt}
+            description="Put prompt that you want to use"
+          >
+            <Textarea
+              onChange={({ detail }) => onChange({injectPrompt: detail.value})}
+              value={data.injectPrompt}
+              placeholder="Please try to answer correctly for the question."
             />
           </FormField>
         </SpaceBetween>

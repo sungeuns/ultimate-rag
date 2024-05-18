@@ -65,6 +65,7 @@ def _convert_semantic_search_result(workspace_id: str, result: dict):
 
 
 def _convert_semantic_search_item(item: dict):
+
     ret_value = {
         "sources": item["sources"],
         "chunkId": item["chunk_id"],
@@ -78,6 +79,7 @@ def _convert_semantic_search_item(item: dict):
         "title": item["title"],
         "content": item["content"],
         "contentComplement": item["content_complement"],
+        "metadata": item.get("metadata", None),
         "vectorSearchScore": item.get("vector_search_score", 0),
         "keywordSearchScore": item.get("keyword_search_score"),
         "score": item["score"],

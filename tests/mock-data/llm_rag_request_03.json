@@ -1,0 +1,37 @@
+{
+    "message": {
+        "action": "run",
+        "modelInterface": "langchain",
+        "direction": "IN",
+        "timestamp": "1715299579",
+        "userId": "289173d0-a031-70eb-363b-c12f7f56ede8",
+        "data": {
+            "mode": "chain",
+            "text": "I want to know the PL emission of the samples change when the room temperature is changed from 3.3 to 2.1",
+            "files": [],
+            "modelName": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "provider": "bedrock",
+            "sessionId-TEST": "26a7eb97-2935-4ba5-8ab7-7bc56915b388",
+            "sessionId": "",
+            "workspaceId": "92106a84-8f69-4c66-b0dd-90ba52df0377",
+            "injectPrompt": "",
+            "modelKwargs": {
+                "streaming": true,
+                "maxTokens": 512,
+                "temperature": 0.6,
+                "topP": 0.9
+            }
+        },
+        "test" : {
+            "sendToClient": false
+        }
+    },
+    "timestamp": "2024-05-10 00:06:19,706+0000",
+    "service": "chatbot",
+    "cold_start": false,
+    "function_name": "llm-chat-devGenAIChatBotS-LangchainInterfaceReques-QVOOZXdE5jRh",
+    "function_memory_size": "1024",
+    "function_arn": "arn:aws:lambda:us-west-2:723597067299:function:llm-chat-devGenAIChatBotS-LangchainInterfaceReques-QVOOZXdE5jRh",
+    "function_request_id": "1ab233fc-85df-56cd-b0ad-6d4be2e4233f",
+    "xray_trace_id": "1-663d64fb-c8b08d678375b1e9141c1625"
+}

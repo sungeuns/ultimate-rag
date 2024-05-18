@@ -20,6 +20,7 @@ const defaults: OpenSearchWorkspaceCreateInput = {
   hybridSearch: true,
   chunkSize: 1000,
   chunkOverlap: 200,
+  docType: null,
 };
 
 export default function CreateWorkspaceOpenSearch() {
@@ -103,6 +104,12 @@ export default function CreateWorkspaceOpenSearch() {
     const crossEncoderModel = OptionsHelper.parseValue(
       data.crossEncoderModel?.value
     );
+      
+
+    let selectedDocType = "NORMAL";
+    if(data.docType?.value){
+      selectedDocType = data.docType?.value
+    }
 
     const apiClient = new ApiClient(appContext);
     try {
@@ -117,11 +124,13 @@ export default function CreateWorkspaceOpenSearch() {
         chunkingStrategy: "recursive",
         chunkSize: data.chunkSize,
         chunkOverlap: data.chunkOverlap,
+        docType: selectedDocType,
       });
 
       navigate("/rag/workspaces");
       return;
     } catch (e) {
+      console.error(e);
       setSubmitting(false);
       setGlobalError("Something went wrong");
     }

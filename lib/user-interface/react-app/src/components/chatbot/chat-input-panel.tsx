@@ -356,6 +356,7 @@ export default function ChatInputPanel(props: ChatInputPanelProps) {
         provider: provider,
         sessionId: props.session.id,
         workspaceId: state.selectedWorkspace?.value,
+        injectPrompt: props.configuration.injectPrompt,
         modelKwargs: {
           streaming: props.configuration.streaming,
           maxTokens: props.configuration.maxTokens,

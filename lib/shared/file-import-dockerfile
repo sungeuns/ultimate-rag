@@ -1,4 +1,7 @@
-FROM quay.io/unstructured-io/unstructured:0.11.2
+# FROM quay.io/unstructured-io/unstructured:0.11.2
+# FROM quay.io/unstructured-io/unstructured:0.13.3
+FROM quay.io/unstructured-io/unstructured:0.13.7
+
 
 WORKDIR /app
 COPY file-import-batch-job/requirements.txt requirements.txt
@@ -6,5 +9,6 @@ RUN pip install -r requirements.txt
 
 COPY layers/python-sdk/python/ .
 COPY file-import-batch-job/main.py ./main.py
+COPY file-import-batch-job/document_processor.py ./document_processor.py
 
 CMD ["python3", "main.py"]

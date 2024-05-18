@@ -33,6 +33,7 @@ aws_to_pg = {
     "vi": "vietnamese",
     "zh": "chinese",
     "zh-TW": "chinese",
+    "ko": "korean",
 }
 
 

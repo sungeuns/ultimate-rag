@@ -12,6 +12,7 @@ import { CrossEncoderSelectorField } from "./cross-encoder-selector-field";
 import { ChunkSelectorField } from "./chunks-selector";
 import { HybridSearchField } from "./hybrid-search-field";
 import { LanguageSelectorField } from "./language-selector-field";
+import { DocTypeSelectorField } from "./doc-type-selector-field";
 
 export interface OpenSearchFormProps {
   data: OpenSearchWorkspaceCreateInput;
@@ -86,6 +87,12 @@ function OpenSearchFooter(props: {
           submitting={props.submitting}
           onChange={props.onChange}
           data={props.data}
+          errors={props.errors}
+        />
+        <DocTypeSelectorField
+          submitting={props.submitting}
+          docType={props.data.docType}
+          onChange={props.onChange}
           errors={props.errors}
         />
       </SpaceBetween>
