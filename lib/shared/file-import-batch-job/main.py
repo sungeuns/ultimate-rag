@@ -45,7 +45,6 @@ def main():
     if doc_type not in [DOC_TYPE_NORMAL, DOC_TYPE_COMPLEX]:
         doc_type = DOC_TYPE_NORMAL
 
-    doc_type = DOC_TYPE_COMPLEX
     print(f"Workspace Doc Type: {doc_type}")
 
     document = genai_core.documents.get_document(WORKSPACE_ID, DOCUMENT_ID)
