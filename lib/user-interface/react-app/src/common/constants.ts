@@ -1,7 +1,17 @@
 import { StatusIndicatorProps } from "@cloudscape-design/components";
 import { SemanticSearchResult } from "../API";
 
-export const fileDistributionUrl = "https://d3oauetmr9ze6e.cloudfront.net"
+const getDistributionUrl = () => {
+  const currentUrl: string = window.location.href;
+  if(currentUrl.includes("localhost")){
+    // When testing somewhere different, Need to specify CF distribution (for example localhost, ...)
+    return "https://dtpq8vyk5t5ol.cloudfront.net/";  // It must include "/" at the end
+  }else{
+    return currentUrl;
+  }
+}
+
+export const fileDistributionUrl = getDistributionUrl();
 
 export const languageList = [
   { value: "simple", label: "Simple" },

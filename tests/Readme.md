@@ -102,6 +102,8 @@ There are sample mock data in `tests/mock-data`. The variable is depends on each
 
 Check the [guide](https://aws-samples.github.io/aws-genai-llm-chatbot/guide/deploy.html#run-user-interface-locally) for locally run frontend application (React App)
 
+- Need to modify the distribution url in `getDistributionUrl()` function, which located in `lib/user-interface/react-app/src/common/constants.ts` file because it basically uses same CF distribution url with website.
+
 
 #### How to modify API for frontend
 

@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 
 
 PROCESSING_BUCKET_NAME = os.environ["PROCESSING_BUCKET_NAME"]
+PROCESSING_KEY_PREFIX = "data/processed"
 s3 = boto3.resource("s3")
 
 
@@ -142,10 +143,10 @@ def _store_content_on_s3(
 ):
     s3.Object(
         PROCESSING_BUCKET_NAME,
-        f"{workspace_id}/{document_id}/{document_sub_id}/path.txt",
+        f"{PROCESSING_KEY_PREFIX}/{workspace_id}/{document_id}/{document_sub_id}/path.txt",
     ).put(Body=path)
 
     s3.Object(
         PROCESSING_BUCKET_NAME,
-        f"{workspace_id}/{document_id}/{document_sub_id}/content.txt",
+        f"{PROCESSING_KEY_PREFIX}/{workspace_id}/{document_id}/{document_sub_id}/content.txt",
     ).put(Body=content)

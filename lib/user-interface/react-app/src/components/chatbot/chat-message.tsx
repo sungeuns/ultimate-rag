@@ -93,7 +93,7 @@ export default function ChatMessage(props: ChatMessageProps) {
     const pathAfterS3Prefix = s3Url.substring(5);
     const firstSlashIndex = pathAfterS3Prefix.indexOf("/");
     const filePath = pathAfterS3Prefix.substring(firstSlashIndex + 1);
-    return `${distributionUrl}/${filePath}`;
+    return `${distributionUrl}${filePath}`;
   }
 
   return (
@@ -166,6 +166,8 @@ export default function ChatMessage(props: ChatMessageProps) {
                             ...convertS3UrlListToCloudFrontUrlList(imageList),
                           ];
                         }
+
+                        console.log(urlList);
 
                         return {
                           id: `${i}`,
