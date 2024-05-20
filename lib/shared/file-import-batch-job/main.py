@@ -41,7 +41,7 @@ def main():
     if not workspace:
         raise genai_core.types.CommonError(f"Workspace {WORKSPACE_ID} does not exist")
     
-    doc_type = workspace.get("docType", DOC_TYPE_NORMAL)
+    doc_type = workspace.get("doc_type", DOC_TYPE_NORMAL)
     if doc_type not in [DOC_TYPE_NORMAL, DOC_TYPE_COMPLEX]:
         doc_type = DOC_TYPE_NORMAL
 

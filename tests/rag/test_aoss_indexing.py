@@ -13,9 +13,10 @@ class TestAossIndexingFeatures:
         pass
 
     def get_mock_data(self):
-        mock_data_name = "aoss_pdf_indexing_01.json"
+        # mock_data_name = "aoss_pdf_indexing_01.json"
         # mock_data_name = "aoss_pdf_indexing_02.json"
         # mock_data_name = "aoss_pdf_indexing_03.json"
+        mock_data_name = "aoss_pdf_indexing_04.json"
         with open(os.path.join("mock-data", mock_data_name), "r") as f:
             test_data = json.load(f)    
 

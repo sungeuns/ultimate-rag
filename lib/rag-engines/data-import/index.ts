@@ -110,6 +110,20 @@ export class DataImport extends Construct {
       autoDeleteObjects: true,
       enforceSSL: true,
       serverAccessLogsBucket: processingLogsBucket,
+      cors: [
+        {
+          allowedHeaders: ["*"],
+          allowedMethods: [
+            s3.HttpMethods.PUT,
+            s3.HttpMethods.POST,
+            s3.HttpMethods.GET,
+            s3.HttpMethods.HEAD,
+          ],
+          allowedOrigins: ["*"],
+          exposedHeaders: ["ETag"],
+          maxAge: 3000,
+        },
+      ],
     });
 
     uploadBucket.addEventNotification(

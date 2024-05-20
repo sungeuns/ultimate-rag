@@ -1,6 +1,8 @@
 import { StatusIndicatorProps } from "@cloudscape-design/components";
 import { SemanticSearchResult } from "../API";
 
+export const fileDistributionUrl = "https://d3oauetmr9ze6e.cloudfront.net"
+
 export const languageList = [
   { value: "simple", label: "Simple" },
   { value: "arabic", label: "Arabic" },

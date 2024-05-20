@@ -14,8 +14,8 @@ import { Shared } from "../shared";
 import { SystemConfig } from "../shared/types";
 import { Utils } from "../shared/utils";
 import { ChatBotApi } from "../chatbot-api";
-import { PrivateWebsite } from "./private-website"
-import { PublicWebsite } from "./public-website"
+import { PrivateWebsite } from "./private-website";
+import { PublicWebsite } from "./public-website";
 import { NagSuppressions } from "cdk-nag";
 
 export interface UserInterfaceProps {
@@ -26,6 +26,7 @@ export interface UserInterfaceProps {
   readonly identityPool: cognitoIdentityPool.IdentityPool;
   readonly api: ChatBotApi;
   readonly chatbotFilesBucket: s3.Bucket;
+  readonly dataProcessingBucket: s3.Bucket;
   readonly crossEncodersEnabled: boolean;
   readonly sagemakerEmbeddingsEnabled: boolean;
 }
@@ -48,26 +49,30 @@ export class UserInterface extends Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       autoDeleteObjects: true,
-      bucketName: props.config.privateWebsite ? props.config.domain : undefined, 
+      bucketName: props.config.privateWebsite ? props.config.domain : undefined,
       websiteIndexDocument: "index.html",
       websiteErrorDocument: "index.html",
       enforceSSL: true,
       serverAccessLogsBucket: uploadLogsBucket,
     });
-    
+
     // Deploy either Private (only accessible within VPC) or Public facing website
     let apiEndpoint: string;
     let websocketEndpoint: string;
     let distribution;
-    
-    if (props.config.privateWebsite) {
-      const privateWebsite = new PrivateWebsite(this, "PrivateWebsite", {...props, websiteBucket: websiteBucket });
-    } else {
-      const publicWebsite = new PublicWebsite(this, "PublicWebsite", {...props, websiteBucket: websiteBucket });
-      distribution = publicWebsite.distribution
-    }
 
-      
+    if (props.config.privateWebsite) {
+      const privateWebsite = new PrivateWebsite(this, "PrivateWebsite", {
+        ...props,
+        websiteBucket: websiteBucket,
+      });
+    } else {
+      const publicWebsite = new PublicWebsite(this, "PublicWebsite", {
+        ...props,
+        websiteBucket: websiteBucket,
+      });
+      distribution = publicWebsite.distribution;
+    }
 
     const exportsAsset = s3deploy.Source.jsonData("aws-exports.json", {
       aws_project_region: cdk.Aws.REGION,
@@ -90,6 +95,10 @@ export class UserInterface extends Construct {
           bucket: props.chatbotFilesBucket.bucketName,
           region: cdk.Aws.REGION,
         },
+        AWSS3DataProcessing: {
+          bucket: props.dataProcessingBucket.bucketName,
+          region: cdk.Aws.REGION,
+        },
       },
       config: {
         rag_enabled: props.config.rag.enabled,
@@ -103,6 +112,62 @@ export class UserInterface extends Construct {
       },
     });
 
+    function setPolicyForDataBucket(s3Bucket: s3.Bucket) {
+      props.identityPool.authenticatedRole.addToPrincipalPolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+          resources: [
+            `${s3Bucket.bucketArn}/public/*`,
+            `${s3Bucket.bucketArn}/protected/\${cognito-identity.amazonaws.com:sub}/*`,
+            `${s3Bucket.bucketArn}/private/\${cognito-identity.amazonaws.com:sub}/*`,
+          ],
+        })
+      );
+
+      props.identityPool.authenticatedRole.addToPrincipalPolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ["s3:ListBucket"],
+          resources: [`${s3Bucket.bucketArn}`],
+          conditions: {
+            StringLike: {
+              "s3:prefix": [
+                "public/",
+                "public/*",
+                "protected/",
+                "protected/*",
+                "private/${cognito-identity.amazonaws.com:sub}/",
+                "private/${cognito-identity.amazonaws.com:sub}/*",
+              ],
+            },
+          },
+        })
+      );
+
+      s3Bucket.addCorsRule({
+        allowedMethods: [
+          s3.HttpMethods.GET,
+          s3.HttpMethods.PUT,
+          s3.HttpMethods.POST,
+          s3.HttpMethods.DELETE,
+        ],
+        allowedOrigins: ["*"],
+        allowedHeaders: ["*"],
+        exposedHeaders: [
+          "x-amz-server-side-encryption",
+          "x-amz-request-id",
+          "x-amz-id-2",
+          "ETag",
+        ],
+        maxAge: 3000,
+      });
+    }
+
+    setPolicyForDataBucket(props.chatbotFilesBucket);
+    setPolicyForDataBucket(props.dataProcessingBucket);
+
+    /*
     // Allow authenticated web users to read upload data to the attachments bucket for their chat files
     // ref: https://docs.amplify.aws/lib/storage/getting-started/q/platform/js/#using-amazon-s3
     props.identityPool.authenticatedRole.addToPrincipalPolicy(
@@ -116,6 +181,7 @@ export class UserInterface extends Construct {
         ],
       })
     );
+
     props.identityPool.authenticatedRole.addToPrincipalPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
@@ -155,6 +221,7 @@ export class UserInterface extends Construct {
       ],
       maxAge: 3000,
     });
+    */
 
     const asset = s3deploy.Source.asset(appPath, {
       bundling: {
@@ -198,21 +265,17 @@ export class UserInterface extends Construct {
       prune: false,
       sources: [asset, exportsAsset],
       destinationBucket: websiteBucket,
-      distribution: props.config.privateWebsite ? undefined : distribution
+      distribution: props.config.privateWebsite ? undefined : distribution,
     });
 
-   
     /**
      * CDK NAG suppression
      */
-    NagSuppressions.addResourceSuppressions(
-      uploadLogsBucket, 
-      [
-        {
-          id: "AwsSolutions-S1",
-          reason: "Bucket is the server access logs bucket for websiteBucket.",
-        },
-      ]
-    );
+    NagSuppressions.addResourceSuppressions(uploadLogsBucket, [
+      {
+        id: "AwsSolutions-S1",
+        reason: "Bucket is the server access logs bucket for websiteBucket.",
+      },
+    ]);
   }
 }

@@ -24,6 +24,7 @@ import {
 } from "./types";
 
 import { getSignedUrl } from "./utils";
+import { fileDistributionUrl } from "../../common/constants";
 
 import "react-json-view-lite/dist/index.css";
 import "../../styles/app.scss";
@@ -50,6 +51,7 @@ export default function ChatMessage(props: ChatMessageProps) {
       if (message.metadata?.files as ImageFile[]) {
         const files: ImageFile[] = [];
         for await (const file of message.metadata?.files as ImageFile[]) {
+          // console.log(`File key: ${file.key}`);
           const signedUrl = await getSignedUrl(file.key);
           files.push({
             ...file,
@@ -71,6 +73,28 @@ export default function ChatMessage(props: ChatMessageProps) {
     props.message.content && props.message.content.length > 0
       ? props.message.content
       : props.message.tokens?.map((v) => v.value).join("");
+
+  function convertS3UrlListToCloudFrontUrlList(s3UrlList: string[]) {
+    const cloudFrontUrlList: string[] = [];
+    for (let i = 0; i < s3UrlList.length; i++) {
+      const cfUrl = convertS3UrlToCloudFrontUrl(
+        s3UrlList[i],
+        fileDistributionUrl
+      );
+      cloudFrontUrlList.push(cfUrl);
+    }
+    return cloudFrontUrlList;
+  }
+
+  function convertS3UrlToCloudFrontUrl(
+    s3Url: string,
+    distributionUrl: string
+  ): string {
+    const pathAfterS3Prefix = s3Url.substring(5);
+    const firstSlashIndex = pathAfterS3Prefix.indexOf("/");
+    const filePath = pathAfterS3Prefix.substring(firstSlashIndex + 1);
+    return `${distributionUrl}/${filePath}`;
+  }
 
   return (
     <div>
@@ -130,6 +154,19 @@ export default function ChatMessage(props: ChatMessageProps) {
                       tabs={(
                         props.message.metadata.documents as RagDocument[]
                       ).map((p: any, i) => {
+                        let urlList: any[] = [];
+                        if (p.metadata?.metadata != null) {
+                          const docMeta = p.metadata?.metadata;
+                          console.log(docMeta);
+                          const imageList = [
+                            ...docMeta.table,
+                            ...docMeta.figure,
+                          ];
+                          urlList = [
+                            ...convertS3UrlListToCloudFrontUrlList(imageList),
+                          ];
+                        }
+
                         return {
                           id: `${i}`,
                           label:
@@ -143,6 +180,27 @@ export default function ChatMessage(props: ChatMessageProps) {
                                 readOnly={true}
                                 rows={8}
                               />
+
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  gap: "10px",
+                                }}
+                              >
+                                {urlList.map((url, index) => (
+                                  <img
+                                    key={index}
+                                    src={url}
+                                    alt={`image-${index}`}
+                                    style={{
+                                      maxWidth: "300px",
+                                      maxHeight: "300px",
+                                    }}
+                                  />
+                                ))}
+                              </div>
                             </>
                           ),
                         };

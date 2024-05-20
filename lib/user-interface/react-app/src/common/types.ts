@@ -27,6 +27,10 @@ export interface AppConfig {
     AWSS3: {
       bucket: string;
       region: string;
+    },
+    AWSS3DataProcessing: {
+      bucket: string;
+      region: string;
     };
   };
 }
