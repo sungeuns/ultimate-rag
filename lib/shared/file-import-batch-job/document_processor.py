@@ -84,3 +84,24 @@ class DocumentProcessor:
             replace=True,
             metadata=None
         )
+
+    def add_qna_style_contents(self, workspace: dict, document: dict, content):
+        questions = []
+        answers = []
+        for item in content:
+            question, answer = item
+            questions.append(question)
+            answers.append(answer)
+
+        print(f"Number of questions : {len(questions)}")
+        print(f"Number of answers : {len(answers)}")
+
+        genai_core.chunks.add_chunks(
+            workspace=workspace,
+            document=document,
+            document_sub_id=None,
+            chunks=questions,
+            chunk_complements=answers,
+            replace=True,
+            metadata=None
+        )

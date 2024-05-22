@@ -25,10 +25,11 @@ class TestLLMFeatures:
         # self.test_simple_llm()
 
     def test_rag(self):
-        filename = "llm_rag_request_01.json"
+        # filename = "llm_rag_request_01.json"
         # filename = "llm_rag_request_02.json"
         # filename = "llm_rag_request_03.json"
         # filename = "llm_rag_request_04.json"
+        filename = "llm_rag_request_05.json"
         test_event = self.get_test_data(filename)["message"]
         output = llm_handler(test_event)
         print("--------------------------------------------------")

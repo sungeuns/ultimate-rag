@@ -1,3 +1,6 @@
+
+import re
+
 import genai_core.embeddings
 import genai_core.cross_encoder
 from typing import List
@@ -6,6 +9,14 @@ from aws_lambda_powertools import Logger
 from genai_core.types import CommonError, Task
 
 logger = Logger()
+
+
+def check_cjk_lang(input_str):
+    pattern = '[\u3131-\uD79D\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF]'
+    if re.search(pattern, input_str):
+        return True
+    else:
+        return False
 
 
 def query_workspace_open_search(
@@ -22,7 +33,15 @@ def query_workspace_open_search(
     embeddings_model_name = workspace["embeddings_model_name"]
     cross_encoder_model_provider = workspace["cross_encoder_model_provider"]
     cross_encoder_model_name = workspace["cross_encoder_model_name"]
-    hybrid_search = workspace["hybrid_search"]
+
+    # ENG 외의 언어 제대로 동작안함.
+    use_cross_encoder = True
+    if check_cjk_lang(query):
+        hybrid_search = False
+        use_cross_encoder = False
+    else:
+        hybrid_search = workspace["hybrid_search"]
+
     languages = workspace["languages"]
     vector_search_limit = 25
     keyword_search_limit = 25
@@ -67,6 +86,8 @@ def query_workspace_open_search(
         )
         items.extend(keyword_search_records)
 
+    print(f"Num of search result: {len(items)}")
+
     unique_items = dict({})
     for item in items:
         chunk_id = item["chunk_id"]
@@ -96,23 +117,31 @@ def query_workspace_open_search(
                 item["keyword_search_score"] = current["keyword_search_score"]
 
     unique_items = list(unique_items.values())
+
+    print(f"Num of unique items: {len(unique_items)}")
+
     score_dict = dict({})
-    if len(unique_items) > 0:
-        passages = [record["content"] for record in unique_items]
-        passage_scores = genai_core.cross_encoder.rank_passages(
-            cross_encoder_model, query, passages
-        )
 
-        for i in range(len(unique_items)):
-            score = passage_scores[i]
-            unique_items[i]["score"] = score
-            score_dict[unique_items[i]["chunk_id"]] = score
-    unique_items = sorted(unique_items, key=lambda x: x["score"], reverse=True)
+    if use_cross_encoder:
+        if len(unique_items) > 0:
+            passages = [record["content"] for record in unique_items]
+            passage_scores = genai_core.cross_encoder.rank_passages(
+                cross_encoder_model, query, passages
+            )
 
-    for record in vector_search_records:
-        record["score"] = score_dict[record["chunk_id"]]
-    for record in keyword_search_records:
-        record["score"] = score_dict[record["chunk_id"]]
+            for i in range(len(unique_items)):
+                score = passage_scores[i]
+                unique_items[i]["score"] = score
+                score_dict[unique_items[i]["chunk_id"]] = score
+        unique_items = sorted(unique_items, key=lambda x: x["score"], reverse=True)
+
+        for record in vector_search_records:
+            record["score"] = score_dict[record["chunk_id"]]
+        for record in keyword_search_records:
+            record["score"] = score_dict[record["chunk_id"]]
+    else:
+        for record in vector_search_records:
+            record["score"] = record["vector_search_score"]
 
     if full_response:
         unique_items = unique_items[:limit]

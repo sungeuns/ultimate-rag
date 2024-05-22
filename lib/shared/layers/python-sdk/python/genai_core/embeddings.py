@@ -73,20 +73,30 @@ def _generate_embeddings_bedrock(model: EmbeddingsModel, input: List[str], task:
         raise CommonError("Bedrock is not enabled.")
 
     model_provider = model.name.split(".")[0]
+
     if model_provider == Provider.AMAZON.value:
-        return _generate_embeddings_amazon(model, input, bedrock)
+        if "titan-embed-text-v1" in model.name:
+            return _generate_embeddings_titan_v1(model, input, bedrock)
+        elif "titan-embed-text-v2" in model.name:
+            return _generate_embeddings_titan_v2(model, input, bedrock)
+        else:
+            raise CommonError(f'Unknown titan embedding model "{model.name}"')
     elif model_provider == Provider.COHERE.value:
         return _generate_embeddings_cohere(model, input, task, bedrock)
     else:
         raise CommonError(f'Unknown embeddings provider "{model_provider}"')
 
 
-def _generate_embeddings_amazon(model: EmbeddingsModel, input: List[str], bedrock):
+# model_id : amazon.titan-embed-text-v1
+def _generate_embeddings_titan_v1(model: EmbeddingsModel, input: List[str], bedrock):
+
     ret_value = []
     for value in input:
-        body = json.dumps({"inputText": value})
+        body = {
+            "inputText": value,
+        }
         response = bedrock.invoke_model(
-            body=body,
+            body=json.dumps(body),
             modelId=model.name,
             accept="application/json",
             contentType="application/json",
@@ -100,6 +110,30 @@ def _generate_embeddings_amazon(model: EmbeddingsModel, input: List[str], bedroc
     ret_value = ret_value / np.linalg.norm(ret_value, axis=1, keepdims=True)
     ret_value = ret_value.tolist()
     return ret_value
+
+
+# model_id: amazon.titan-embed-text-v2:0
+def _generate_embeddings_titan_v2(model: EmbeddingsModel, input: List[str], bedrock):
+    ret_value = []
+    for value in input:
+        
+        body = {
+            "inputText": value,
+            "dimensions": model.dimensions,
+            "normalize": True
+        }
+        response = bedrock.invoke_model(
+            body=json.dumps(body),
+            modelId=model.name,
+            accept="application/json",
+            contentType="application/json",
+        )
+        response_body = json.loads(response.get("body").read())
+        embedding = response_body.get("embedding")
+        ret_value.append(embedding)
+
+    return ret_value
+
 
 
 def _generate_embeddings_cohere(

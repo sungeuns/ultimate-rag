@@ -1,6 +1,4 @@
 {
-    "level": "INFO",
-    "location": "record_handler:125",
     "message": {
         "action": "run",
         "modelInterface": "langchain",

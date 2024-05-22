@@ -1,5 +1,7 @@
 import os
 import boto3
+import pandas as pd
+from io import StringIO
 import genai_core.types
 import genai_core.documents
 import genai_core.workspaces
@@ -63,6 +65,16 @@ def main():
                 Bucket=INPUT_BUCKET_NAME, Key=INPUT_OBJECT_KEY
             )
             content = object["Body"].read().decode("utf-8")
+
+        elif extension == ".csv":
+            qa_list = extract_qa_from_csv(s3_client)
+            if not qa_list:
+                content = load_document_single_page()                
+                upload_extracted_content(s3_client, content)
+                doc_processor.add_chunks(workspace, document, content)
+            else:
+                print(f"Number of QnA set : {len(qa_list)}")
+                doc_processor.add_qna_style_contents(workspace, document, qa_list)
         else:
             """
             S3FileLoder
@@ -72,18 +84,19 @@ def main():
             - https://unstructured-io.github.io/unstructured/core/partition.html
             
             """
-
             if doc_type == DOC_TYPE_NORMAL:
-                unstructured_params = {
-                    "strategy": "fast"
-                }
-                loader = S3FileLoader(
-                    bucket=INPUT_BUCKET_NAME,
-                    key=INPUT_OBJECT_KEY,
-                    mode="single",
-                    **unstructured_params)
-                docs = loader.load()
-                content = docs[0].page_content
+                content = load_document_single_page()
+                # unstructured_params = {
+                #     "strategy": "fast"
+                # }
+                # loader = S3FileLoader(
+                #     bucket=INPUT_BUCKET_NAME,
+                #     key=INPUT_OBJECT_KEY,
+                #     mode="single",
+                #     **unstructured_params)
+
+                # docs = loader.load()
+                # content = docs[0].page_content
                 upload_extracted_content(s3_client, content)
                 doc_processor.add_chunks(workspace, document, content)
 
@@ -118,6 +131,32 @@ def main():
         genai_core.documents.set_status(WORKSPACE_ID, DOCUMENT_ID, "error")
         print(error)
         raise error
+
+
+def extract_qa_from_csv(s3_client):
+    # question, answer
+    object = s3_client.get_object(Bucket=INPUT_BUCKET_NAME, Key=INPUT_OBJECT_KEY)
+    content = object["Body"].read().decode("utf-8")
+    df = pd.read_csv(StringIO(content))
+    if 'question' not in df.columns or 'answer' not in df.columns:
+        return False
+    result = df[['question', 'answer']].values.tolist()
+    return result
+
+
+def load_document_single_page():
+    unstructured_params = {
+        "strategy": "fast"
+    }
+    loader = S3FileLoader(
+        bucket=INPUT_BUCKET_NAME,
+        key=INPUT_OBJECT_KEY,
+        mode="single",
+        **unstructured_params)
+
+    docs = loader.load()
+    content = docs[0].page_content
+    return content
 
 
 def upload_extracted_content(s3_client, content):

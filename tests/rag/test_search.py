@@ -17,8 +17,9 @@ class TestSearchFeatures:
     def get_mock_data(self):
         # filename = "semantic_search_aoss_01.json"
         # filename = "semantic_search_aoss_02.json"
-        filename = "semantic_search_aoss_03.json"
+        # filename = "semantic_search_aoss_03.json"
         # filename = "semantic_search_aoss_04.json"
+        filename = "semantic_search_aoss_05.json"
         with open(os.path.join("mock-data", filename), "r") as f:
             test_data = json.load(f)
 
@@ -37,13 +38,15 @@ class TestSearchFeatures:
 
         for sr in search_result:
             file_path = sr["path"]
-            # contents = sr["content"]
+            contents = sr["content"]
             metadata = sr["metadata"]
             v_score = sr["vectorSearchScore"]
             k_score = sr["keywordSearchScore"]
             score = sr["score"]
             print(f"Path: {file_path}, Vector score: {v_score}, Keyword score: {k_score}, Score: {score}")
+            print(f"contents: {contents}")
             print(f"metadata: {metadata}")
+            print("---------------------------")
 
             
             

@@ -16,7 +16,7 @@ class TestAossIndexingFeatures:
         # mock_data_name = "aoss_pdf_indexing_01.json"
         # mock_data_name = "aoss_pdf_indexing_02.json"
         # mock_data_name = "aoss_pdf_indexing_03.json"
-        mock_data_name = "aoss_pdf_indexing_04.json"
+        mock_data_name = "aoss_csv_indexing_04.json"
         with open(os.path.join("mock-data", mock_data_name), "r") as f:
             test_data = json.load(f)    
 
@@ -49,7 +49,8 @@ class TestAossIndexingFeatures:
         print(index_name)
 
         # doc_id = "1%3A0%3A_VDId48BuDs0q5s-sCJ_"
-        doc_id = "1%3A0%3AI1A5hY8BuDs0q5s-UCOh"
+        # doc_id = "1%3A0%3AI1A5hY8BuDs0q5s-UCOh"
+        doc_id = "1%3A0%3AflCNn48BuDs0q5s-wCXy"
 
         # query = {
         #     "query": {
@@ -69,19 +70,19 @@ class TestAossIndexingFeatures:
         #     }
         # }
 
-        query = {
-            "query": {
-                "term": {
-                    "_id": doc_id
-                }
-            }
-        }
+        # query = {
+        #     "query": {
+        #         "term": {
+        #             "_id": doc_id
+        #         }
+        #     }
+        # }
 
-        response = client.search(
-            index = index_name,
-            body = query,
-        )
+        # response = client.search(
+        #     index = index_name,
+        #     body = query,
+        # )
 
-        # response = client.get(index=index_name, id=doc_id)
+        response = client.get(index=index_name, id=doc_id)
 
         print(response)
