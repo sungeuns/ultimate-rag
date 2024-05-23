@@ -16,7 +16,8 @@ class TestAossIndexingFeatures:
         # mock_data_name = "aoss_pdf_indexing_01.json"
         # mock_data_name = "aoss_pdf_indexing_02.json"
         # mock_data_name = "aoss_pdf_indexing_03.json"
-        mock_data_name = "aoss_csv_indexing_04.json"
+        # mock_data_name = "aoss_csv_indexing_04.json"
+        mock_data_name = "aoss_pdf_indexing_05.json"
         with open(os.path.join("mock-data", mock_data_name), "r") as f:
             test_data = json.load(f)    
 
@@ -36,8 +37,20 @@ class TestAossIndexingFeatures:
     def run(self):
         self.test_pdf_indexing_feature()
 
-
+    # ========================================================
     # Testing for AOSS
+    # ========================================================
+
+    def delete_aoss_index(self):
+        from genai_core.opensearch.client import get_open_search_client
+
+        client = get_open_search_client()
+
+        index_name = "ef8b387209a547ffb96b2ae96e702c8e_2"
+        response = client.indices.delete(index=index_name)
+
+        print(response)
+
     def check_indexed_data(self):
         from genai_core.opensearch.client import get_open_search_client
 
@@ -50,7 +63,7 @@ class TestAossIndexingFeatures:
 
         # doc_id = "1%3A0%3A_VDId48BuDs0q5s-sCJ_"
         # doc_id = "1%3A0%3AI1A5hY8BuDs0q5s-UCOh"
-        doc_id = "1%3A0%3AflCNn48BuDs0q5s-wCXy"
+        doc_id = "1%3A0%3AjlAPpI8BuDs0q5s-tCZ5"
 
         # query = {
         #     "query": {

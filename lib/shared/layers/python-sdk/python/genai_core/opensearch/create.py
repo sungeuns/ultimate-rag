@@ -48,6 +48,20 @@ def create_workspace_index(workspace: dict):
         },
     }
 
+    """
+    한국어의 경우 형태소 분석기 (nori) 추가사용
+    - 그 외 언어
+      - chinese: smartcn
+      - japanese: kuromoji
+    - AOSS supported plugin
+      - https://docs.aws.amazon.com/ko_kr/opensearch-service/latest/developerguide/serverless-genref.html
+    """
+
+    languages = workspace["languages"]
+    if "korean" in languages:
+        index_body["mappings"]["properties"]["content"]["analyzer"] = "nori"
+        index_body["mappings"]["properties"]["content_complement"]["analyzer"] = "nori"
+    
     response = client.indices.create(index_name, body=index_body)
 
     print("Created workspace index")

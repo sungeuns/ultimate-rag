@@ -65,7 +65,7 @@ export default function GlobalHeader() {
           {
             type: "button",
             text: "GitHub",
-            href: "https://github.com/aws-samples/aws-genai-llm-chatbot",
+            href: "https://github.com/sungeuns/ultimate-rag",
             external: true,
             externalIconAriaLabel: " (opens in a new tab)",
           },

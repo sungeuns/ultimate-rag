@@ -11,6 +11,10 @@ from genai_core.types import CommonError, Task
 logger = Logger()
 
 
+VECTOR_WEIGHT = 0.5
+KEYWORD_WEIGHT = 0.5
+
+
 def check_cjk_lang(input_str):
     pattern = '[\u3131-\uD79D\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF]'
     if re.search(pattern, input_str):
@@ -33,18 +37,17 @@ def query_workspace_open_search(
     embeddings_model_name = workspace["embeddings_model_name"]
     cross_encoder_model_provider = workspace["cross_encoder_model_provider"]
     cross_encoder_model_name = workspace["cross_encoder_model_name"]
+    hybrid_search = workspace["hybrid_search"]
 
-    # ENG 외의 언어 제대로 동작안함.
+    # CJK languages are not good for keyword search
     use_cross_encoder = True
-    if check_cjk_lang(query):
-        hybrid_search = False
+    if check_cjk_lang(query):    
         use_cross_encoder = False
-    else:
-        hybrid_search = workspace["hybrid_search"]
-
+    
     languages = workspace["languages"]
-    vector_search_limit = 25
-    keyword_search_limit = 25
+    result_limit = 25  # 25
+    vector_search_limit = result_limit
+    keyword_search_limit = result_limit
 
     vector_search_records = []
     keyword_search_records = []
@@ -61,7 +64,8 @@ def query_workspace_open_search(
     )
 
     if cross_encoder_model is None:
-        raise CommonError("Cross encoder model not found")
+        use_cross_encoder = False
+        # raise CommonError("Cross encoder model not found")
 
     query_embeddings = genai_core.embeddings.generate_embeddings(
         selected_model, [query], Task.RETRIEVE
@@ -71,19 +75,20 @@ def query_workspace_open_search(
 
     client = get_open_search_client()
     vector_search_records = vector_query(
-        client, index_name, query_embeddings, vector_search_limit
+        client, index_name, query_embeddings, vector_search_limit, normalize=True
     )
     vector_search_records = _convert_records("vector_search", vector_search_records)
     items.extend(vector_search_records)
 
     if hybrid_search:
         keyword_search_records = keyword_query(
-            client, index_name, query, keyword_search_limit
+            client, index_name, query, keyword_search_limit, normalize=True
         )
 
         keyword_search_records = _convert_records(
             "keyword_search", keyword_search_records
         )
+    
         items.extend(keyword_search_records)
 
     print(f"Num of search result: {len(items)}")
@@ -118,8 +123,6 @@ def query_workspace_open_search(
 
     unique_items = list(unique_items.values())
 
-    print(f"Num of unique items: {len(unique_items)}")
-
     score_dict = dict({})
 
     if use_cross_encoder:
@@ -140,9 +143,17 @@ def query_workspace_open_search(
         for record in keyword_search_records:
             record["score"] = score_dict[record["chunk_id"]]
     else:
-        for record in vector_search_records:
-            record["score"] = record["vector_search_score"]
-
+        # Simple weighted ensemble
+        for record in unique_items:
+            score = 0
+            if record["vector_search_score"] is not None:
+                score += record["vector_search_score"] * VECTOR_WEIGHT
+            
+            if record["keyword_search_score"] is not None:
+                score += record["keyword_search_score"] * KEYWORD_WEIGHT
+            
+            record["score"] = score
+    
     if full_response:
         unique_items = unique_items[:limit]
         ret_value = {
@@ -157,6 +168,7 @@ def query_workspace_open_search(
         ret_items = list(filter(lambda val: val["score"] > threshold, unique_items))[
             :limit
         ]
+
         if len(ret_items) < limit:
             unique_items = sorted(
                 unique_items, key=lambda x: x["vector_search_score"] or -1, reverse=True
@@ -219,23 +231,38 @@ def _convert_records(source: str, records: List[dict]):
     return converted_records
 
 
-def vector_query(client, index_name: str, vector: List[float], size: int = 25):
+def get_aoss_result(client, index_name: str, query: str,
+                    size: int = 25, normalize: bool = False):
+    response = client.search(index=index_name, body=query, size=size)
+
+    if normalize:
+        ret_value = normalize_score(response)
+    else:
+        ret_value = response["hits"]["hits"]
+        ret_value = ret_value if ret_value is not None else []
+
+    return ret_value
+
+
+def normalize_score(search_results):
+    hits = (search_results["hits"]["hits"])
+    if len(hits) == 0:
+        return []
+    
+    max_score = float(search_results["hits"]["max_score"])
+    for hit in hits:
+        hit["_score"] = float(hit["_score"]) / max_score
+    
+    return hits
+
+
+def vector_query(client, index_name: str, vector: List[float],
+                 size: int = 25, normalize: bool = False):
     query = {"query": {"knn": {"content_embeddings": {"vector": vector, "k": 5}}}}
-
-    response = client.search(index=index_name, body=query, size=size)
-
-    ret_value = response["hits"]["hits"]
-    ret_value = ret_value if ret_value is not None else []
-
-    return ret_value
+    return get_aoss_result(client, index_name, query, size, normalize)
 
 
-def keyword_query(client, index_name: str, text: str, size: int = 25):
+def keyword_query(client, index_name: str, text: str,
+                  size: int = 25, normalize: bool = False):
     query = {"query": {"match": {"content": text}}}
-
-    response = client.search(index=index_name, body=query, size=size)
-
-    ret_value = response["hits"]["hits"]
-    ret_value = ret_value if ret_value is not None else []
-
-    return ret_value
+    return get_aoss_result(client, index_name, query, size, normalize)

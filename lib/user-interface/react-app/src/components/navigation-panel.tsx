@@ -83,7 +83,7 @@ export default function NavigationPanel() {
       {
         type: "link",
         text: "Documentation",
-        href: "https://aws-samples.github.io/aws-genai-llm-chatbot/",
+        href: "https://github.com/sungeuns/ultimate-rag",
         external: true,
       }
     );
