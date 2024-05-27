@@ -3,6 +3,7 @@
 
 # How to dev/test in local env
 
+
 ### Install pacakges
 
 ```
@@ -119,12 +120,25 @@ $ amplify codegen
 ```
 
 
-### If you use `finch` on MacOS to deploy CDK
+### If you use MacOS
 
+If you use `finch`, need to check storage.
 - Need to increase storage size when there's `no space left on device` error to build container image for file import job.
   - Check the document: https://runfinch.com/docs/managing-finch/macos/disk-management/#disk-size
 - Need to use `CDK_DOCKER` env variables when running deployment command.
   - `CDK_DOCKER=finch npx cdk deploy`
   - Check the `scripts/cdk_deploy_finch.sh`
+
+If you use `docker`, make sure there are enough space.
+- If not, use `docker system prune -a` to clear all docker env.
+
+
+
+### x86/arm64 architecture
+
+- It uses cross platform build like `dockerx` to build docker image. But sometimes, it won't work.
+- You can specify lambda architecture for docker image build in `lib/shared/index.ts`
+  - If you use apple silicon : `const lambdaArchitecture = lambda.Architecture.ARM_64;`
+  - Normal X86 server : `const lambdaArchitecture = lambda.Architecture.X86_64;`
 
 

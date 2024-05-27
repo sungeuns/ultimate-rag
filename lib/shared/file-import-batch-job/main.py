@@ -15,6 +15,7 @@ from document_processor import DocumentProcessor
 
 DOC_TYPE_NORMAL = "NORMAL"
 DOC_TYPE_COMPLEX = "COMPLEX"
+DOC_TYPE_COMPLEX_PDF_SUMMARIZATION = True
 
 
 WORKSPACE_ID = os.environ.get("WORKSPACE_ID")
@@ -27,9 +28,10 @@ PROCESSING_OBJECT_KEY = os.environ.get("PROCESSING_OBJECT_KEY")
 
 def main():
     s3_client = boto3.client("s3")
+    bedrock_client = boto3.client("bedrock-runtime")
     local_output_dir = os.path.join("outputs", DOCUMENT_ID)
     doc_processor = DocumentProcessor(
-        s3_client, PROCESSING_BUCKET_NAME, PROCESSING_OBJECT_KEY)
+        s3_client, bedrock_client, PROCESSING_BUCKET_NAME, PROCESSING_OBJECT_KEY)
 
     print("Starting file converter batch job")
     print("Workspace ID: {}".format(WORKSPACE_ID))
@@ -86,17 +88,6 @@ def main():
             """
             if doc_type == DOC_TYPE_NORMAL:
                 content = load_document_single_page()
-                # unstructured_params = {
-                #     "strategy": "fast"
-                # }
-                # loader = S3FileLoader(
-                #     bucket=INPUT_BUCKET_NAME,
-                #     key=INPUT_OBJECT_KEY,
-                #     mode="single",
-                #     **unstructured_params)
-
-                # docs = loader.load()
-                # content = docs[0].page_content
                 upload_extracted_content(s3_client, content)
                 doc_processor.add_chunks(workspace, document, content)
 
@@ -119,10 +110,10 @@ def main():
                 docs = loader.load()
                 print(f"Number of pages : {len(docs)}")
 
-                # 기존 로직
-                # content = "\n\n".join([doc.page_content for doc in docs])
-                # upload_extracted_content(s3_client, content)
-                # doc_processor.add_chunks(workspace, document, content)
+                # PDF 문서이면서 Complex type 의 경우 문서 자체의 정보도 분석함.
+                if extension == ".pdf" and DOC_TYPE_COMPLEX_PDF_SUMMARIZATION:
+                    doc_processor.add_doc_summarization(workspace, document, docs)
+                    print("Document summarization is added ...")
 
                 doc_processor.add_complex_chunks(workspace, document, docs, local_output_dir)
             else:

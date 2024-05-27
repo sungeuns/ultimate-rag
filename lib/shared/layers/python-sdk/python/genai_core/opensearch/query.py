@@ -11,8 +11,8 @@ from genai_core.types import CommonError, Task
 logger = Logger()
 
 
-VECTOR_WEIGHT = 0.5
-KEYWORD_WEIGHT = 0.5
+VECTOR_WEIGHT = 0.55
+KEYWORD_WEIGHT = 0.45
 
 
 def check_cjk_lang(input_str):

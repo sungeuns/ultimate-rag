@@ -108,6 +108,25 @@ def list_documents(
     }
 
 
+def set_complex_document_summary(
+        workspace_id: str, document_id: str, doc_title: str, doc_summary: str
+):
+    timestamp = _get_timestamp()
+
+    response = documents_table.update_item(
+            Key={"workspace_id": workspace_id, "document_id": document_id},
+            UpdateExpression="SET doc_title=:docTitle, doc_summary=:docSummary, updated_at=:timestampValue",
+            ExpressionAttributeValues={
+                ":docTitle": doc_title,
+                ":docSummary": doc_summary,
+                ":timestampValue": timestamp,
+            },
+        )
+    
+    print(response)
+    return response
+
+
 def set_document_vectors(
     workspace_id: str, document_id: str, vectors: int, replace: bool
 ):
