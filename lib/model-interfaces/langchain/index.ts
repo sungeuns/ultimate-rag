@@ -50,6 +50,8 @@ export class LangChainInterface extends Construct {
         SESSIONS_BY_USER_ID_INDEX_NAME: props.byUserIdIndex,
         API_KEYS_SECRETS_ARN: props.shared.apiKeysSecret.secretArn,
         MESSAGES_TOPIC_ARN: props.messagesTopic.topicArn,
+        DOCUMENTS_TABLE_NAME:
+          props.ragEngines?.documentsTable.tableName ?? "",
         WORKSPACES_TABLE_NAME:
           props.ragEngines?.workspacesTable.tableName ?? "",
         WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME:

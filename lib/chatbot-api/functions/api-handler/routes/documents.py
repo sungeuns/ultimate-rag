@@ -312,6 +312,8 @@ def _convert_document(document: dict):
         "updatedAt": document.get("updated_at", None),
         "rssFeedId": document.get("rss_feed_id", None),
         "rssLastCheckedAt": document.get("rss_last_checked", None),
+        "docTitle": document.get("doc_title", None),
+        # "docSummary": document.get("doc_summary", None),
         "crawlerProperties": {
             "followLinks": document.get("crawler_properties").get("follow_links", None),
             "limit": document.get("crawler_properties").get("limit", None),

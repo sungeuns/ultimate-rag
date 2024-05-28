@@ -34,6 +34,11 @@ const FILES_COLUMN_DEFINITIONS = [
     header: "Size",
     cell: (item: Document) => Utils.bytesToSize(item.sizeInBytes!),
   },
+  {
+    id: "docTitle",
+    header: "Title",
+    cell: (item: Document) => item.docTitle,
+  },
 ];
 
 const TEXTS_COLUMN_DEFINITIONS = [

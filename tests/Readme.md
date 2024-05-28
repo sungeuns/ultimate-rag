@@ -99,6 +99,29 @@ CREATE_OPEN_SEARCH_WORKSPACE_WORKFLOW_ARN=arn:aws:states:us-west-2:723597067299:
 There are sample mock data in `tests/mock-data`. The variable is depends on each AWS account, you must change the value for local testing.
 
 
+### Some hard-coded params
+
+- `lib/shared/file-import-batch-job/main.py` 
+```
+# If true, complex workspace with PDF will add document summarization to the DB (DynamoDB)
+DOC_TYPE_COMPLEX_PDF_SUMMARIZATION = True
+```
+
+- `lib/shared/layers/python-sdk/python/genai_core/langchain/workspace_retriever.py`
+```
+# If true, add document title and summary which summarized using LLM for search result.
+ADD_DOC_SUMMARY = True
+DOC_TOP_K = 3
+```
+
+- `lib/shared/layers/python-sdk/python/genai_core/opensearch/query.py`
+```
+# Hybrid search score weight
+VECTOR_WEIGHT = 0.55
+KEYWORD_WEIGHT = 0.45
+```
+
+
 ### Frontend app local testing
 
 Check the [guide](https://aws-samples.github.io/aws-genai-llm-chatbot/guide/deploy.html#run-user-interface-locally) for locally run frontend application (React App)
