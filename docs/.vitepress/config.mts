@@ -41,6 +41,7 @@ export default defineConfig({
           { text: 'Deploy', link: '/guide/deploy' },
           { text: 'Developer Guide', link: '/guide/developers' },
           { text: 'Development Prioritization', link: '/guide/prioritization' },
+          { text: '개발 및 디버깅 (한국어)', link: '/guide/guide-ko'}
         ]
       },
       {
