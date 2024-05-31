@@ -111,6 +111,8 @@ export class KendraRetrieval extends Construct {
               },
             },
           },
+          // schedule: 'cron(0 12 * * ? *)',  // 매일 낮 12시에 동기화
+          // languageCode: 'ko',  // 기본 문서 언어를 한국어로 설정
           roleArn: kendraRole.roleArn,
         }
       );

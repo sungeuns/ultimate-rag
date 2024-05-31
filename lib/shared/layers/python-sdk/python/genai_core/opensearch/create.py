@@ -23,6 +23,7 @@ def create_workspace_index(workspace: dict):
                     "dimension": int(embeddings_model_dimensions),
                     "method": {
                         "name": "hnsw",
+                        # "space_type": "cosinesimil",
                         "space_type": "l2",
                         "engine": "nmslib",
                         "parameters": {"ef_construction": 512, "m": 16},

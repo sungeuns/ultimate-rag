@@ -27,11 +27,12 @@ MacOS 에서 `docker` 대신 `finch`를 사용하는 경우
 
 #### x86/arm64 아키텍쳐 관련
 
-- `dockerx` 를 사용해서 cross-platform 빌드를 하지만, 동작하지 않는 경우가 있습니다.
-- `lib/shared/index.ts` 파일에서 적절한 컨테이너 빌드를 위한 아키텍쳐를 지정해 줄 필요가 있습니다.
-  - ARM 기반 서버 및 apple silicon의 경우 : `const lambdaArchitecture = lambda.Architecture.ARM_64;`
-  - 일반적인 X86 서버의 경우 : `const lambdaArchitecture = lambda.Architecture.X86_64;`
-
+- `dockerx` 를 사용해서 cross-platform 빌드가 가능하지만, 동작하지 않는 경우가 있습니다.
+  - 따라서 기본적으로는 빌드하는 플랫폼과 동일한 플랫폼을 사용하게 됩니다.
+  - ARM 기반 서버 및 apple silicon인 경우 `ARM_64`, 일반적인 X86 서버인 경우 `X86_64`
+- 만일 특정 플랫폼으로 빌드하고 싶다면 `lib/shared/index.ts` 파일에서 적절한 컨테이너 빌드를 위한 아키텍쳐를 지정해 줄 필요가 있습니다.
+  - `ARM_64` : `const lambdaArchitecture = lambda.Architecture.ARM_64;`
+  - `X86_64` : `const lambdaArchitecture = lambda.Architecture.X86_64;`
 
 
 ## 로컬 개발 환경 구성
