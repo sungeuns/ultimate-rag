@@ -126,4 +126,9 @@ export class Utils {
 
     return result !== null;
   }
+
+  static mergeStringList(array1: string[], array2: string[]): string[] {
+    const mergedSet = new Set([...array1, ...array2]);
+    return Array.from(mergedSet);
+  } 
 }

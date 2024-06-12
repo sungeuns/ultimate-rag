@@ -24,6 +24,7 @@ import {
 } from "./types";
 
 import { getSignedUrl } from "./utils";
+import { Utils } from "../../common/utils";
 import { fileDistributionUrl } from "../../common/constants";
 
 import "react-json-view-lite/dist/index.css";
@@ -44,6 +45,7 @@ export default function ChatMessage(props: ChatMessageProps) {
   const [documentIndex, setDocumentIndex] = useState("0");
   const [promptIndex, setPromptIndex] = useState("0");
   const [selectedIcon, setSelectedIcon] = useState<1 | 0 | null>(null);
+  // const [imageUrlList, setImageUrlList] = useState<string[]>([] as string[]);
 
   useEffect(() => {
     const getSignedUrls = async () => {
@@ -51,7 +53,6 @@ export default function ChatMessage(props: ChatMessageProps) {
       if (message.metadata?.files as ImageFile[]) {
         const files: ImageFile[] = [];
         for await (const file of message.metadata?.files as ImageFile[]) {
-          // console.log(`File key: ${file.key}`);
           const signedUrl = await getSignedUrl(file.key);
           files.push({
             ...file,
@@ -95,6 +96,8 @@ export default function ChatMessage(props: ChatMessageProps) {
     const filePath = pathAfterS3Prefix.substring(firstSlashIndex + 1);
     return `${distributionUrl}${filePath}`;
   }
+
+  let allMetaImageList: string[] = [];
 
   return (
     <div>
@@ -157,7 +160,6 @@ export default function ChatMessage(props: ChatMessageProps) {
                         let urlList: any[] = [];
                         if (p.metadata?.metadata != null) {
                           const docMeta = p.metadata?.metadata;
-                          console.log(docMeta);
                           const imageList = [
                             ...docMeta.table,
                             ...docMeta.figure,
@@ -165,9 +167,14 @@ export default function ChatMessage(props: ChatMessageProps) {
                           urlList = [
                             ...convertS3UrlListToCloudFrontUrlList(imageList),
                           ];
-                        }
 
-                        console.log(urlList);
+                          if (urlList.length > 0) {
+                            allMetaImageList = Utils.mergeStringList(
+                              allMetaImageList,
+                              urlList
+                            );
+                          }
+                        }
 
                         return {
                           id: `${i}`,
@@ -341,6 +348,32 @@ export default function ChatMessage(props: ChatMessageProps) {
               },
             }}
           />
+
+          {props?.showMetadata && allMetaImageList.length > 0 && (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                {allMetaImageList.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`image-${index}`}
+                    style={{
+                      maxWidth: "300px",
+                      maxHeight: "300px",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className={styles.thumbsContainer}>
             {(selectedIcon === 1 || selectedIcon === null) && (
               <Button
