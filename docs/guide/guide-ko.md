@@ -35,6 +35,14 @@ MacOS 에서 `docker` 대신 `finch`를 사용하는 경우
   - `X86_64` : `const lambdaArchitecture = lambda.Architecture.X86_64;`
 
 
+#### Bedrock 사용 관련
+
+- LLM 기능을 활용할 때 bedrock을 쓰려면 Bedrock model access를 미리 허용 해 주어야 합니다.
+  - playground에서 사용할 LLM에 대해서 허용해 주어야 합니다.
+- RAG 기능을 활용하는 경우, 인덱싱/검색 시 미리 해당하는 embedding 모델에 대한 허용 또한 해 주어야 합니다.
+  - Embedding의 경우 설정 선택 시 따로 다른 걸 선택하지 않았다면 기본적으로 `Titan Text Embeddings V2` 를 사용합니다.
+
+
 ## 로컬 개발 환경 구성
 
 #### Python 패키지

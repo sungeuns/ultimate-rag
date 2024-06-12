@@ -115,6 +115,7 @@ export class AwsGenAILLMChatbotStack extends cdk.Stack {
       sessionsTable: chatBotApi.sessionsTable,
       byUserIdIndex: chatBotApi.byUserIdIndex,
       chatbotFilesBucket: chatBotApi.filesBucket,
+      ragEngines: ragEngines,
     });
 
     // Route all incoming messages targeted to idefics to the idefics model interface queue
