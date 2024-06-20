@@ -86,13 +86,13 @@ You have:
 **Step 1.** Clone the repository.
 
 ```bash
-git clone https://github.com/aws-samples/aws-genai-llm-chatbot
+git clone https://github.com/sungeuns/ultimate-rag.git
 ```
 
 **Step 2.** Move into the cloned repository.
 
 ```bash
-cd aws-genai-llm-chatbot
+cd ultimate-rag
 ```
 
 **Step 3.** <a id="deployment-dependencies-installation"></a> Install the project dependencies and build the project.

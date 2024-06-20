@@ -36,6 +36,7 @@ export class SageMakerRagModels extends Construct {
         ],
         codeFolder: path.join(__dirname, "./model"),
         instanceType: "ml.g4dn.xlarge",
+        // instanceType: "ml.c6a.xlarge",
       },
     });
 

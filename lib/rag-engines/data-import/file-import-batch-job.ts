@@ -71,8 +71,10 @@ export class FileImportBatchJob extends Construct {
       this,
       "FileImportContainer",
       {
-        cpu: 2,
-        memory: cdk.Size.mebibytes(2048),
+        // cpu: 2,
+        // memory: cdk.Size.mebibytes(2048),
+        cpu: 4,
+        memory: cdk.Size.mebibytes(8192),
         image: ecs.ContainerImage.fromAsset("lib/shared", {
           platform: aws_ecr_assets.Platform.LINUX_AMD64,
           file: "file-import-dockerfile",
@@ -103,7 +105,7 @@ export class FileImportBatchJob extends Construct {
 
     const fileImportJob = new batch.EcsJobDefinition(this, "FileImportJob", {
       container: fileImportContainer,
-      timeout: cdk.Duration.minutes(30),
+      timeout: cdk.Duration.minutes(75),
       retryAttempts: 3,
       retryStrategies: [
         batch.RetryStrategy.of(
