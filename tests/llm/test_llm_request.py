@@ -30,7 +30,8 @@ class TestLLMFeatures:
         # filename = "llm_rag_request_03.json"
         # filename = "llm_rag_request_04.json"
         # filename = "llm_rag_request_05.json"
-        filename = "llm_rag_request_06.json"
+        # filename = "llm_rag_request_06.json"
+        filename = "llm_rag_request_07.json"
         test_event = self.get_test_data(filename)["message"]
         output = llm_handler(test_event)
         print("--------------------------------------------------")

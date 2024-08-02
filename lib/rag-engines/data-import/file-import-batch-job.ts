@@ -38,9 +38,11 @@ export class FileImportBatchJob extends Construct {
       {
         vpc: props.shared.vpc,
         instanceTypes: [
-          ec2.InstanceType.of(ec2.InstanceClass.M6A, ec2.InstanceSize.LARGE),
+          // ec2.InstanceType.of(ec2.InstanceClass.M6A, ec2.InstanceSize.LARGE),
+          ec2.InstanceType.of(ec2.InstanceClass.M6A, ec2.InstanceSize.XLARGE2),
+          ec2.InstanceType.of(ec2.InstanceClass.M7A, ec2.InstanceSize.XLARGE4),
         ],
-        maxvCpus: 4,
+        maxvCpus: 8,
         minvCpus: 0,
         replaceComputeEnvironment: true,
         updateTimeout: cdk.Duration.minutes(30),
@@ -105,8 +107,8 @@ export class FileImportBatchJob extends Construct {
 
     const fileImportJob = new batch.EcsJobDefinition(this, "FileImportJob", {
       container: fileImportContainer,
-      timeout: cdk.Duration.minutes(75),
-      retryAttempts: 3,
+      timeout: cdk.Duration.minutes(180),
+      retryAttempts: 2,
       retryStrategies: [
         batch.RetryStrategy.of(
           batch.Action.EXIT,

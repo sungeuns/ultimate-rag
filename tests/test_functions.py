@@ -7,6 +7,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def test_sm_models():
+    from sagemaker.test_cross_encoder import TestCrossEncoder
+    test_cross_encoder = TestCrossEncoder()
+    test_cross_encoder.run()
+
+
 # 일반적인 Rest API 테스트
 def test_rest_api_features():
     from rag.test_rest_api import TestRestApiFeatures
@@ -45,8 +51,9 @@ def test_aoss_manager():
 
 
 def main():
+    test_sm_models()
     # test_search_features()
-    test_llm_rag_features()
+    # test_llm_rag_features()
     # test_aoss_indexing_features()
     # test_rest_api_features()
     # test_aoss_manager()

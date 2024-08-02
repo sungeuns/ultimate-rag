@@ -2,13 +2,18 @@
 import os
 import json
 from typing import List
+from PIL import Image
 
 import genai_core.chunks
 import genai_core.documents
 
 
-DOC_SUMMARIZATION_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+IMAGE_MIN_SIZE_THRESHOLD = 1024 * 10 # 10KB
+IMAGE_WH_MIN_PIXEL_THRESHOLD = 5
+IMAGE_WH_RATIO_THRESHOLD = 50
 
+DOC_SUMMARIZATION_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+DOC_SUMMARIZATION_LEN_LIMIT = 25000
 DOC_SUMMARIZATION_PROMPT = """
 You're an expert at reading and summarizing documentation. 
 Summarize the following data in the <document>.
@@ -30,6 +35,28 @@ class DocumentProcessor:
         self.bedrock_client = bedrock_client
         self.out_bucket = out_bucket
         self.out_prefix = os.path.split(out_key)[0]
+
+    def validate_image(self, file_path):
+        file_size = os.path.getsize(file_path)
+        if file_size <= IMAGE_MIN_SIZE_THRESHOLD:
+            return False
+        
+        try:
+            with Image.open(file_path) as img:
+                width, height = img.size
+
+                if width <= IMAGE_WH_MIN_PIXEL_THRESHOLD or height <= IMAGE_WH_MIN_PIXEL_THRESHOLD:
+                    return False
+
+                aspect_ratio = max(width / height, height / width)
+                if aspect_ratio > IMAGE_WH_RATIO_THRESHOLD:
+                    return False
+
+        except Exception as e:
+            print(f"Failed to load image: {e}")
+            return False
+
+        return True
 
     def get_llm_result(self, prompt):
     
@@ -60,15 +87,23 @@ class DocumentProcessor:
         return llm_output
 
     def add_doc_summarization(self, workspace: dict, document: dict, docs: List[str]):
-        doc_contents = "\n\n".join([doc.page_content for doc in docs])
-
-        prompt = DOC_SUMMARIZATION_PROMPT.format(
-            doc_contents=doc_contents
-        )
         
-        llm_out = self.get_llm_result(prompt)
-        print(llm_out)
         try:
+            doc_contents = "\n\n".join([doc.page_content for doc in docs])
+
+            print(f"Length of original contents : {len(doc_contents)}")
+            if len(doc_contents) > DOC_SUMMARIZATION_LEN_LIMIT:
+                print("Too long contents. Truncate the contents ")
+                doc_contents = doc_contents[:DOC_SUMMARIZATION_LEN_LIMIT]
+
+            prompt = DOC_SUMMARIZATION_PROMPT.format(
+                doc_contents=doc_contents
+            )
+            
+            llm_out = self.get_llm_result(prompt)
+            print("-------------- Raw LLM output -------------")
+            print(llm_out)
+
             start_index = llm_out.find('{')
             end_index = llm_out.rfind('}') + 1
             json_str = llm_out[start_index:end_index]
@@ -122,6 +157,13 @@ class DocumentProcessor:
             meta = {"table": [], "figure": []}
             # Upload files (image and table) to s3
             for image in image_list:
+
+                # Check image is valid. Delete if it's not valid image
+                if not self.validate_image(image):
+                    if os.path.isfile(image):
+                        os.remove(image)
+                    continue
+
                 filename = os.path.basename(image)
                 s3_key = f"{self.out_prefix}/{filename}"
                 self.s3_client.upload_file(image, self.out_bucket, s3_key)

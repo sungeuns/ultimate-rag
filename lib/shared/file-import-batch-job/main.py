@@ -1,4 +1,5 @@
 import os
+import time
 import boto3
 import pandas as pd
 from io import StringIO
@@ -106,16 +107,30 @@ def main():
                     key=INPUT_OBJECT_KEY,
                     mode="paged",
                     **unstructured_params)
+            
+                start_time = time.time()
                 
-                docs = loader.load()
-                print(f"Number of pages : {len(docs)}")
+                # docs = loader.load()
+                # print(f"Number of pages : {len(docs)}")
+
+                # 테스트 결과 lazy_load 사용해도 속도/메모리 이득이 없어 보임.
+                doc_iterator = loader.lazy_load()
+                docs = []
+                for doc in doc_iterator:
+                    docs.append(doc)
+
+                extraction_time = time.time()
+                print(f"Complex document extarction time: {extraction_time - start_time} sec")
 
                 # PDF 문서이면서 Complex type 의 경우 문서 자체의 정보도 분석함.
                 if extension == ".pdf" and DOC_TYPE_COMPLEX_PDF_SUMMARIZATION:
                     doc_processor.add_doc_summarization(workspace, document, docs)
-                    print("Document summarization is added ...")
+                    print("Document summarization process ...")
 
                 doc_processor.add_complex_chunks(workspace, document, docs, local_output_dir)
+
+                indexing_time = time.time()
+                print(f"Summarization/Indexing is finished: {indexing_time - extraction_time} sec")
             else:
                 raise Exception(f"Unknown document type: {doc_type}")            
     except Exception as error:
