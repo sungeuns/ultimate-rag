@@ -87,15 +87,27 @@ def add_chunks(
     )
 
 
-def split_content(workspace: dict, content: str):
-    chunking_strategy = workspace["chunking_strategy"]
+def get_recursive_text_splitter(workspace: dict):
+    # chunking_strategy = workspace["chunking_strategy"]
     chunk_size = workspace["chunk_size"]
     chunk_overlap = workspace["chunk_overlap"]
 
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len)
+    
+    return text_splitter
+
+
+def split_content(workspace: dict, content: str):
+    chunking_strategy = workspace["chunking_strategy"]
+    # chunk_size = workspace["chunk_size"]
+    # chunk_overlap = workspace["chunk_overlap"]
+
     if chunking_strategy == "recursive":
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len
-        )
+        text_splitter = get_recursive_text_splitter(workspace)
+        # text_splitter = RecursiveCharacterTextSplitter(
+        #     chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len
+        # )
 
         text_data = text_splitter.split_text(content)
         text_data = [text.replace("\x00", "\uFFFD") for text in text_data]

@@ -19,7 +19,10 @@ class TestAossIndexingFeatures:
         # mock_data_name = "aoss_csv_indexing_04.json"
         # mock_data_name = "aoss_pdf_indexing_05.json"
         # mock_data_name = "aoss_pdf_indexing_06.json"
-        mock_data_name = "aoss_pdf_indexing_07.json"
+        # mock_data_name = "aoss_pdf_indexing_07.json"
+        # mock_data_name = "aoss_pdf_indexing_08.json"
+        # mock_data_name = "aoss_pdf_indexing_09.json"
+        mock_data_name = "aoss_pdf_indexing_10.json"
         with open(os.path.join("mock-data", mock_data_name), "r") as f:
             test_data = json.load(f)    
 

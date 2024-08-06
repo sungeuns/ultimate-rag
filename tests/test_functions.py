@@ -51,10 +51,10 @@ def test_aoss_manager():
 
 
 def main():
-    test_sm_models()
+    # test_sm_models()
     # test_search_features()
     # test_llm_rag_features()
-    # test_aoss_indexing_features()
+    test_aoss_indexing_features()
     # test_rest_api_features()
     # test_aoss_manager()
 

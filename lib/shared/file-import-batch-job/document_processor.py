@@ -12,6 +12,9 @@ IMAGE_MIN_SIZE_THRESHOLD = 1024 * 10 # 10KB
 IMAGE_WH_MIN_PIXEL_THRESHOLD = 5
 IMAGE_WH_RATIO_THRESHOLD = 50
 
+CHAR_LEN_MIN_THRESHOLD = 20
+ADD_MD_FORMAT_TABLE = False  # Currently not working well for multi-language
+
 DOC_SUMMARIZATION_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
 DOC_SUMMARIZATION_LEN_LIMIT = 25000
 DOC_SUMMARIZATION_PROMPT = """
@@ -127,9 +130,38 @@ class DocumentProcessor:
             
         return True
 
+    def json_to_markdown_table(self, data):
+        # json_str = json_str.replace("\'", "\"")
+        # data = json.loads(json_str)
+        try:
+
+            max_x = max(item['x'] for item in data) + 1
+            max_y = max(item['y'] for item in data) + 1
+            
+            table = [['' for _ in range(max_x)] for _ in range(max_y)]
+
+            for item in data:
+                table[item['y']][item['x']] = item['content']
+
+            markdown_table = []
+
+            header = '| ' + ' | '.join(table[0]) + ' |'
+            markdown_table.append(header)
+
+            separator = '| ' + ' | '.join(['---'] * len(table[0])) + ' |'
+            markdown_table.append(separator)
+
+            for row in table[1:]:
+                markdown_table.append('| ' + ' | '.join(row) + ' |')
+            
+            return "\n".join(markdown_table)
+
+        except Exception as e:
+            print(f"Failed to convert json to table: {e}")
+            return False
+        
     def add_complex_chunks(self, workspace: dict, document: dict,
                            docs: List[str], local_output_dir: str):
-
         """
         Element of docs
         - page_content
@@ -143,14 +175,25 @@ class DocumentProcessor:
         chunk_meta = []
         for page in docs:
             page_text = page.page_content
-            chunks.append(page_text)
             metadata = page.metadata
+
+            if ADD_MD_FORMAT_TABLE:
+                if "table_as_cells" in metadata:
+                    table_markdown = self.json_to_markdown_table(metadata["table_as_cells"])
+                    print("********************")
+                    print(table_markdown)
+                    print("********************")
+                    if table_markdown:
+                        page_text += "\n" + table_markdown
+
+            chunks.append(page_text)
+            
             page_number = metadata["page_number"]
 
             image_list = []
             if metadata.get("image_path", None):
                 for filename in filenames:
-                    if filename.startswith(f"figure-{page_number}") or filename.startswith(f"table-{page_number}"):
+                    if filename.startswith(f"figure-{page_number}-") or filename.startswith(f"table-{page_number}-"):
                         target_path = os.path.join(local_output_dir, filename)
                         image_list.append(target_path)
             
@@ -162,6 +205,7 @@ class DocumentProcessor:
                 if not self.validate_image(image):
                     if os.path.isfile(image):
                         os.remove(image)
+                        print(f" - Invalid image is deleted: {image}")
                     continue
 
                 filename = os.path.basename(image)
@@ -181,17 +225,40 @@ class DocumentProcessor:
         if len(chunks) != len(chunk_meta):
             raise Exception(f"chunks ({len(chunks)}) chunk_meta ({len(chunk_meta)}) have different length")
 
-        # chunks = genai_core.chunks.split_content(workspace, content)
+        self.split_and_add_complex_chunks(workspace, document, chunks, chunk_meta)
 
+    def split_and_add_complex_chunks(
+            self, workspace: dict, document: dict,
+            chunks: List[str], chunk_meta: List[object]):
+        
+        refined_chunks = []
+        refined_chunk_meta = []
+        text_splitter = genai_core.chunks.get_recursive_text_splitter(workspace)
+        
+        for i in range(len(chunks)):
+            chunk = chunks[i]
+            meta = chunk_meta[i]
+
+            split_chunks = text_splitter.split_text(chunk)
+            for split_chunk in split_chunks:
+                if len(split_chunk) > CHAR_LEN_MIN_THRESHOLD:
+                    refined_chunks.append(split_chunk)
+                    refined_chunk_meta.append(meta)
+                else:
+                    print(f" - Skip too short chunk in page {i} : {len(split_chunk)}")
+
+        print(f" - Num of refined chunk : {len(refined_chunks)}")
+        print(f" - Num of refined meta : {len(refined_chunk_meta)}")
+    
         # indexing with page content
         genai_core.chunks.add_chunks(
             workspace=workspace,
             document=document,
             document_sub_id=None,
-            chunks=chunks,
+            chunks=refined_chunks,
             chunk_complements=None,
             replace=True,
-            metadata=chunk_meta
+            metadata=refined_chunk_meta
         )
 
     def add_chunks(self, workspace: dict, document: dict, content: str):

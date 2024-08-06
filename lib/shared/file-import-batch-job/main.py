@@ -85,6 +85,9 @@ def main():
 
             Unstructured partition
             - https://unstructured-io.github.io/unstructured/core/partition.html
+
+            partition_pdf
+            - https://docs.unstructured.io/open-source/core-functionality/partitioning#partition-pdf
             
             """
             if doc_type == DOC_TYPE_NORMAL:
@@ -93,14 +96,23 @@ def main():
                 doc_processor.add_chunks(workspace, document, content)
 
             elif doc_type == DOC_TYPE_COMPLEX:
+                
+                # Currently it does not working
+                ocr_languages = ["eng"]
+                # if "korean" in workspace["languages"]:
+                #     ocr_languages.append("kor")
+
                 unstructured_params = {
                     "strategy": "hi_res",
                     "extract_images_in_pdf": True,
                     "extract_image_block_types": ["Image", "Table"],
                     "extract_image_block_to_payload": False,
                     "extract_image_block_output_dir": f"./{local_output_dir}",
-                    "include_page_breaks": True
+                    "include_page_breaks": True,
+                    "languages": ocr_languages,
                 }
+
+                print(f"unstructured.io parameters : {unstructured_params}")
 
                 loader = S3FileLoader(
                     bucket=INPUT_BUCKET_NAME,
